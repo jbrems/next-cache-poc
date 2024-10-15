@@ -11,7 +11,6 @@ export type PokemonData = {
 
 export async function GET() {
   const pokemonId = getRandomPokemonId()
-  console.log(`Fetching random Pokemon #${pokemonId} from API...`)
   const apiResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
   const pokemonData: PokemonData = await apiResponse.json()
   return NextResponse.json(mapPokemonData(pokemonData))

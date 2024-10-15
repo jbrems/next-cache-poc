@@ -4,12 +4,10 @@ import { Pokemon } from "./pokemon.types"
 import { getRandomPokemonId } from "./pokemon.utils"
 
 export async function getRandomPokemon(): Promise<Pokemon> {
-  console.log('Getting random pokemon from /random')
   return fetch(`${process.env.NEXT_URL}/api/pokemon/random`).then(res => res.json())
 }
 
 export async function getPokemon(): Promise<Pokemon> {
-  console.log('Getting random pokemon from /[id]')
   const pokemonId = getRandomPokemonId()
   return fetch(`${process.env.NEXT_URL}/api/pokemon/${pokemonId}`).then(res => res.json())
 }

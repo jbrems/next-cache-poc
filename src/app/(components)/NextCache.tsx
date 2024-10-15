@@ -1,6 +1,7 @@
 import { getCachedPokemon } from "../(pokemon)/pokemon.service";
 import { PokemonInfo } from "../(pokemon)/pokemon.types";
 import { PokemonTeam } from "../(pokemon)/PokemonTeam";
+import { ClearCacheForm } from "./ClearCacheForm";
 
 export async function NextCache({ info }: { info: PokemonInfo }) {
   const pokemon1 = await getCachedPokemon()
@@ -13,5 +14,6 @@ export async function NextCache({ info }: { info: PokemonInfo }) {
   return <div>
     <h3>Next cache</h3>
     <PokemonTeam pokemons={[pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6]} info={info} />
+    <ClearCacheForm />
   </div>
 }
