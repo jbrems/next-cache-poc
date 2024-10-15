@@ -16,5 +16,5 @@ export async function getPokemon(): Promise<Pokemon> {
 
 export const getStoredPokemon = () => getRandomPokemon()
 export const getMemoizedPokemon = cache(getPokemon)
-export const getCachedPokemon = unstable_cache(getPokemon, ['pokemons'], { tags: ['pokemons'] })
+export const getCachedPokemon = unstable_cache(getPokemon, ['pokemon'], { tags: ['pokemon'] })
 

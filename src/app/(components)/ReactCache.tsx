@@ -11,7 +11,7 @@ export async function ReactCache({ info }: { info: PokemonInfo }) {
   const pokemon6 = await getMemoizedPokemon()
 
   return <div>
-    <h3>React cache (memoization)</h3>
+    <h3>React cache</h3>
     <PokemonTeam pokemons={[pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6]} info={info} />
   </div>
 }

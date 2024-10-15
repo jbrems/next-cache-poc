@@ -11,7 +11,7 @@ export async function NoCache({ info }: { info: PokemonInfo }) {
   const pokemon6 = await getPokemon()
 
   return <div>
-    <h3>No cache (unique fetch URLs)</h3>
+    <h3>No cache</h3>
     <PokemonTeam pokemons={[pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6]} info={info} />
   </div>
 }

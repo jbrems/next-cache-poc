@@ -1,5 +1,5 @@
 import { PokemonData } from "../api/pokemon/random/route"
-import { Pokemon } from "./pokemon.types"
+import { Pokemon, PokemonType } from "./pokemon.types"
 
 export function mapPokemonData(data: PokemonData): Pokemon {
   return {
@@ -12,7 +12,7 @@ export function mapPokemonData(data: PokemonData): Pokemon {
       defense: getStat(data, 'defense'),
       speed: getStat(data, 'speed'),
     },
-    type: data.types.map(t => t.type.name).join(', '),
+    types: data.types.map(type => type.type.name as PokemonType),
   }
 }
 

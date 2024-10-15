@@ -11,7 +11,7 @@ export async function FetchCache({ info }: { info: PokemonInfo }) {
   const pokemon6 = await getStoredPokemon()
 
   return <div>
-    <h3>Fetch cache (identical fetch URL)</h3>
+    <h3>Fetch cache</h3>
     <PokemonTeam pokemons={[pokemon1, pokemon2, pokemon3, pokemon4, pokemon5, pokemon6]} info={info} />
   </div>
 }

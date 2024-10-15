@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   return <>
-    <h2>Your favorite POCemon team</h2>
     <NoCache info="NAME" />
     <ReactCache info="NAME" />
     <FetchCache info="NAME" />

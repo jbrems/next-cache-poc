@@ -8,7 +8,9 @@ export type Pokemon = {
     defense: number
     speed: number
   }
-  type: string
+  types: PokemonType[]
 }
 
 export type PokemonInfo = 'NAME' | 'STATS' | 'TYPES'
+
+export type PokemonType = 'bug' | 'dragon' | 'electric' | 'fairy' | 'fighting' | 'fire' | 'flying' | 'ghost' | 'grass' | 'ground' | 'ice' | 'normal' | 'poison' | 'psychic' | 'rock' | 'water'

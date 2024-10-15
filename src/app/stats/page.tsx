@@ -8,7 +8,6 @@ export const dynamic = 'force-dynamic'
 
 export default function StatsPage() {
   return <>
-    <h2>Stats</h2>
     <NoCache info="STATS" />
     <ReactCache info="STATS" />
     <FetchCache info="STATS" />
