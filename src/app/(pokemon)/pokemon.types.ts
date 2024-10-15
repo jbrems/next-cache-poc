@@ -10,3 +10,5 @@ export type Pokemon = {
   }
   type: string
 }
+
+export type PokemonInfo = 'NAME' | 'STATS' | 'TYPES'

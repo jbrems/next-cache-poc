@@ -9,9 +9,9 @@ export const dynamic = 'force-dynamic'
 export default function TypesPage() {
   return <>
     <h2>Dynamic types</h2>
-    <NoCache />
-    <ReactCache />
-    <FetchCache />
-    <NextCache />
+    <NoCache info="TYPES" />
+    <ReactCache info="TYPES" />
+    <FetchCache info="TYPES" />
+    <NextCache info="TYPES" />
   </>
 }
