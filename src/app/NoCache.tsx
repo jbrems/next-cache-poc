@@ -1,7 +1,11 @@
+import { cookies } from "next/headers";
 import { getRandomPokemon } from "./(pokemon)/pokemon.service";
 import { PokemonTeam } from "./(pokemon)/PokemonTeam";
 
 export async function NoCache() {
+  const forceDynamic = cookies().get('dummy-cookie')?.value
+  console.log(forceDynamic)
+
   const pokemon1 = await getRandomPokemon()
   const pokemon2 = await getRandomPokemon()
   const pokemon3 = await getRandomPokemon()
