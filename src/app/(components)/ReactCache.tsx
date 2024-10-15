@@ -1,5 +1,5 @@
-import { getMemoizedPokemon } from "./(pokemon)/pokemon.service";
-import { PokemonTeam } from "./(pokemon)/PokemonTeam";
+import { getMemoizedPokemon } from "../(pokemon)/pokemon.service";
+import { PokemonTeam } from "../(pokemon)/PokemonTeam";
 
 export async function ReactCache() {
   const pokemon1 = await getMemoizedPokemon()

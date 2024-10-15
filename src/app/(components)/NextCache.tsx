@@ -1,5 +1,5 @@
-import { getCachedPokemon } from "./(pokemon)/pokemon.service";
-import { PokemonTeam } from "./(pokemon)/PokemonTeam";
+import { getCachedPokemon } from "../(pokemon)/pokemon.service";
+import { PokemonTeam } from "../(pokemon)/PokemonTeam";
 
 export async function NextCache() {
   const pokemon1 = await getCachedPokemon()

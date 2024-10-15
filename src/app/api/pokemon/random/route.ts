@@ -1,4 +1,4 @@
-import { mapPokemonData } from "@/app/(pokemon)/pokemon.utils"
+import { getRandomPokemonId, mapPokemonData } from "@/app/(pokemon)/pokemon.utils"
 import { NextResponse } from "next/server"
 
 export type PokemonData = {
@@ -10,9 +10,9 @@ export type PokemonData = {
 }
 
 export async function GET() {
-  const randomNumber = Math.ceil(Math.random() * 151)
-  console.log(`Fetching Pokemon ${randomNumber} from API...`)
-  const apiResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomNumber}`, { cache: 'no-store' })
+  const pokemonId = getRandomPokemonId()
+  console.log(`Fetching random Pokemon #${pokemonId} from API...`)
+  const apiResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
   const pokemonData: PokemonData = await apiResponse.json()
   return NextResponse.json(mapPokemonData(pokemonData))
 }

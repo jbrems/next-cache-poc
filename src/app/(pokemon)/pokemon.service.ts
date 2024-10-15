@@ -1,13 +1,20 @@
 import { unstable_cache } from "next/cache"
 import { cache } from "react"
 import { Pokemon } from "./pokemon.types"
+import { getRandomPokemonId } from "./pokemon.utils"
 
-export async function getRandomPokemon(fetchOptions: RequestInit = { cache: 'no-store' }): Promise<Pokemon> {
-  console.log('Getting random pokemon')
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/random`, fetchOptions).then(res => res.json())
+export async function getRandomPokemon(): Promise<Pokemon> {
+  console.log('Getting random pokemon from /random')
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/random`).then(res => res.json())
 }
 
-export const getStoredPokemon = () => getRandomPokemon({ cache: 'force-cache' })
-export const getMemoizedPokemon = cache(getRandomPokemon)
-export const getCachedPokemon = unstable_cache(getRandomPokemon, ['pokemons'], { tags: ['pokemons'] })
+export async function getPokemon(): Promise<Pokemon> {
+  console.log('Getting random pokemon from /[id]')
+  const pokemonId = getRandomPokemonId()
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/${pokemonId}`).then(res => res.json())
+}
+
+export const getStoredPokemon = () => getRandomPokemon()
+export const getMemoizedPokemon = cache(getPokemon)
+export const getCachedPokemon = unstable_cache(getPokemon, ['pokemons'], { tags: ['pokemons'] })
 

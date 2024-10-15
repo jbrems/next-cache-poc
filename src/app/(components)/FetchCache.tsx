@@ -1,5 +1,5 @@
-import { getStoredPokemon } from "./(pokemon)/pokemon.service";
-import { PokemonTeam } from "./(pokemon)/PokemonTeam";
+import { getStoredPokemon } from "../(pokemon)/pokemon.service";
+import { PokemonTeam } from "../(pokemon)/PokemonTeam";
 
 export async function FetchCache() {
   const pokemon1 = await getStoredPokemon()
@@ -9,7 +9,7 @@ export async function FetchCache() {
   const pokemon5 = await getStoredPokemon()
 
   return <div>
-    <h3>Fetch cache</h3>
+    <h3>Fetch cache (identical fetch URL)</h3>
     <PokemonTeam pokemons={[pokemon1, pokemon2, pokemon3, pokemon4, pokemon5]}></PokemonTeam>
   </div>
 }

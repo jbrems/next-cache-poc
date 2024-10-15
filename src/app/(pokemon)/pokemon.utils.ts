@@ -19,3 +19,7 @@ export function mapPokemonData(data: PokemonData): Pokemon {
 function getStat(data: PokemonData, stat: keyof Pokemon['stats']): number {
   return data.stats.find(s => s.stat.name === stat)?.base_stat || 0
 }
+
+export function getRandomPokemonId(): number {
+  return Math.ceil(Math.random() * 151)
+}
