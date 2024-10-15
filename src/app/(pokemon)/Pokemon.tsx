@@ -62,6 +62,7 @@ function PokemonTypes({ pokemon }: { pokemon: PokemonType }) {
     poison: 'text-purple-500',
     psychic: 'text-purple-600',
     rock: 'text-stone-600',
+    steel: 'text-neutral-100',
     water: 'text-blue-500',
   }
 

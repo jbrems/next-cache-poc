@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-neutral-900 text-neutral-300 flex flex-col items-center gap-4">
+      <body className="bg-neutral-900 text-neutral-300 flex flex-col items-center gap-2">
         <h1 className="text-5xl text-yellow-600">Next cache POCemon</h1>
         <ul className="flex gap-32 *:text-xl *:border-b">
           <li><Link href="/">Favorites</Link></li>
