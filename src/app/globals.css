@@ -7,16 +7,16 @@ h3 {
 }
 
 .pokemon-team {
-  & li:nth-child(4) .pokemon,
-  & li:nth-child(5) .pokemon,
-  & li:nth-child(6) .pokemon {
+  & li:nth-child(4),
+  & li:nth-child(5),
+  & li:nth-child(6) {
     display: none;
   }
 }
 
 @media screen and (min-width: 610px) {
   .pokemon-team {
-    & li:nth-child(4) .pokemon {
+    & li:nth-child(4) {
       display: flex;
     }
   }
@@ -24,7 +24,7 @@ h3 {
 
 @media screen and (min-width: 770px) {
   .pokemon-team {
-    & li:nth-child(5) .pokemon {
+    & li:nth-child(5) {
       display: flex;
     }
   }
@@ -32,7 +32,7 @@ h3 {
 
 @media screen and (min-width: 930px) {
   .pokemon-team {
-    & li:nth-child(6) .pokemon {
+    & li:nth-child(6) {
       display: flex;
     }
   }
