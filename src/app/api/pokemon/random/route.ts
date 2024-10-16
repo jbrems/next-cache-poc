@@ -1,4 +1,4 @@
-import { getRandomPokemonId, mapPokemonData } from "@/app/(pokemon)/pokemon.utils"
+import { getRandomPokemonId, mapPokemonData } from "@/app/pokemon/pokemon.utils"
 import { NextResponse } from "next/server"
 
 export type PokemonData = {

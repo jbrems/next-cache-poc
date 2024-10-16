@@ -1,6 +1,6 @@
-import { getStoredPokemon } from "../(pokemon)/pokemon.service";
-import { PokemonInfo } from "../(pokemon)/pokemon.types";
-import { PokemonTeam } from "../(pokemon)/PokemonTeam";
+import { getStoredPokemon } from "../pokemon/pokemon.service";
+import { PokemonInfo } from "../pokemon/pokemon.types";
+import { PokemonTeam } from "../pokemon/PokemonTeam";
 
 export async function FetchCache({ info }: { info: PokemonInfo }) {
   const pokemon1 = await getStoredPokemon()

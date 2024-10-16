@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PokemonData } from "../random/route";
-import { mapPokemonData } from "@/app/(pokemon)/pokemon.utils";
+import { mapPokemonData } from "@/app/pokemon/pokemon.utils";
 
 export async function GET(_request: NextRequest, { params }: { params: { id: string }}) {
   const pokemonId = params.id
