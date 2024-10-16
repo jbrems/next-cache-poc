@@ -6,7 +6,7 @@ const copyrightMode = process.env.COPYRIGHT_MODE === 'true'
 export function Pokemon({ pokemon, info }: { pokemon: PokemonType, info: PokemonInfo }) {
   const copyrightClasses =  copyrightMode? 'brightness-0 contrast-[.2]' : ''
   
-  return <div className="flex flex-col items-center bg-neutral-800 rounded-lg w-32 h-40 justify-center">
+  return <div className="pokemon flex flex-col items-center bg-neutral-800 rounded-lg w-32 h-40 justify-center">
     <img src={pokemon.img} alt={pokemon.name} className={`h-28 w-28 -mt-2 drop-shadow-[2px_4px_6px_black] ${copyrightClasses}`} />
     {info === 'NAME' && <PokemonName pokemon={pokemon} />}
     {info === 'STATS' && <PokemonStats pokemon={pokemon} />}
