@@ -1,5 +1,4 @@
-import { PokemonData } from "../api/pokemon/random/route"
-import { Pokemon, PokemonType } from "./pokemon.types"
+import { Pokemon, PokemonData, PokemonType } from "./pokemon.types"
 
 export function mapPokemonData(data: PokemonData): Pokemon {
   return {

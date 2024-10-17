@@ -1,18 +1,29 @@
 import { unstable_cache } from "next/cache"
 import { cache } from "react"
-import { Pokemon } from "./pokemon.types"
-import { getRandomPokemonId } from "./pokemon.utils"
+import { Pokemon, PokemonData } from "./pokemon.types"
+import { getRandomPokemonId, mapPokemonData } from "./pokemon.utils"
 
-export async function getRandomPokemon(): Promise<Pokemon> {
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/random`).then(res => res.json())
+export async function fetchRandomPokemon(fetchOptions?: RequestInit): Promise<Pokemon> {
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/random`, fetchOptions).then(res => res.json())
 }
 
-export async function getPokemon(): Promise<Pokemon> {
+export async function fetchStaticPokemon(fetchOptions?: RequestInit): Promise<Pokemon> {
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/static`, fetchOptions).then(res => res.json())
+}
+
+export async function fetchUniquePokemon(): Promise<Pokemon> {
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/random?cache-buster=${Math.random()}`).then(res => res.json())
+}
+
+export async function fetchPokemon(): Promise<Pokemon> {
   const pokemonId = getRandomPokemonId()
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/${pokemonId}`).then(res => res.json())
+  console.log(`🆔 Fetching pokemon with id ${pokemonId} from PokeAPI`)
+  const apiResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
+  const pokemonData: PokemonData = await apiResponse.json()
+  return mapPokemonData(pokemonData)
 }
 
-export const getStoredPokemon = () => getRandomPokemon()
-export const getMemoizedPokemon = cache(getPokemon)
-export const getCachedPokemon = unstable_cache(getPokemon, ['pokemon'], { tags: ['pokemon'] })
+export const getStoredPokemon = () => fetchRandomPokemon({ cache: 'force-cache' })
+export const getMemoizedPokemon = cache(fetchPokemon)
+export const getCachedPokemon = unstable_cache(fetchPokemon, ['pokemon'], { tags: ['pokemon'] })
 
