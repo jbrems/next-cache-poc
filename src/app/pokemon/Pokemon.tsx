@@ -3,7 +3,7 @@ import { typeColors } from "./pokemon.utils";
 
 const copyrightMode = process.env.COPYRIGHT_MODE === 'true'
 
-export function Pokemon({ pokemon, info }: { pokemon: PokemonType, info: PokemonInfo }) {
+export function Pokemon({ pokemon, info }: { pokemon: PokemonType, info?: PokemonInfo }) {
   const copyrightClasses =  copyrightMode? 'brightness-0 contrast-[.2]' : ''
   
   return <div className="pokemon flex flex-col items-center bg-neutral-800 rounded-lg w-32 h-36 justify-center">
