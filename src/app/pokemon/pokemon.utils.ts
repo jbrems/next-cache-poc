@@ -20,7 +20,8 @@ function getStat(data: PokemonData, stat: keyof Pokemon['stats']): number {
 }
 
 export function getRandomPokemonId(): number {
-  return Math.ceil(Math.random() * 151)
+  const maxPokemonId = Math.min(Number(process.env.MAX_POKEMON_ID), 1025)
+  return Math.ceil(Math.random() * maxPokemonId)
 }
 
 export const typeColors: Record<PokemonType, string> = {
