@@ -24,6 +24,14 @@ export function getRandomPokemonId(): number {
   return Math.ceil(Math.random() * maxPokemonId)
 }
 
+export async function fetchPokemon() {
+  const pokemonId = getRandomPokemonId()
+  console.log(`🦄 Fetching pokemon with id ${pokemonId} from PokeAPI`)
+  const apiResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`)
+  const pokemonData: PokemonData = await apiResponse.json()
+  return mapPokemonData(pokemonData)
+}
+
 export const typeColors: Record<PokemonType, string> = {
   bug: 'text-green-400 border-green-400',
   dragon: 'text-yellow-600 border-yellow-600',
