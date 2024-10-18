@@ -1,0 +1,1 @@
+export type CacheInfo = 'NO_CACHE' | 'FETCH_CACHE' | 'REACT_CACHE' | 'NEXT_CACHE' | 'STATIC_ENDPOINT' | 'CACHE_BUST' | 'PAGE_CACHE'

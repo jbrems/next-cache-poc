@@ -1,21 +1,24 @@
+import { CacheInfo } from "../cache/cache.types";
+import { CacheInfoLabel } from "../cache/CacheInfoLabel";
 import { PokemonInfo, Pokemon as PokemonType } from "./pokemon.types";
 import { typeColors } from "./pokemon.utils";
 
 const copyrightMode = process.env.COPYRIGHT_MODE === 'true'
 
-export function Pokemon({ pokemon, info }: { pokemon: PokemonType, info?: PokemonInfo }) {
+export function Pokemon({ pokemon, pokemonInfo, cacheInfo }: { pokemon: PokemonType, pokemonInfo: PokemonInfo, cacheInfo?: CacheInfo }) {
   const copyrightClasses =  copyrightMode? 'brightness-0 contrast-[.2]' : ''
   
-  return <div className="pokemon flex flex-col items-center bg-neutral-800 rounded-lg w-32 h-36 justify-center">
-    <img src={pokemon.img} alt={pokemon.name} className={`h-28 w-28 -mt-2 drop-shadow-[2px_4px_6px_black] ${copyrightClasses}`} />
-    {info === 'NAME' && <PokemonName pokemon={pokemon} />}
-    {info === 'STATS' && <PokemonStats pokemon={pokemon} />}
-    {info === 'TYPES' && <PokemonTypes pokemon={pokemon} />}
+  return <div className="pokemon flex flex-col items-center bg-neutral-800 rounded-lg w-32 h-36 p-2 justify-center">
+    {cacheInfo && <CacheInfoLabel cacheInfo={cacheInfo} />}
+    <img src={pokemon.img} alt={pokemon.name} className={`h-28 w-28 -mb-2 drop-shadow-[2px_4px_6px_black] ${copyrightClasses}`} />
+    {pokemonInfo === 'NAME' && <PokemonName pokemon={pokemon} />}
+    {pokemonInfo === 'STATS' && <PokemonStats pokemon={pokemon} />}
+    {pokemonInfo === 'TYPES' && <PokemonTypes pokemon={pokemon} />}
   </div>
 }
 
 function PokemonName({ pokemon }: { pokemon: PokemonType }) {
-  return <p className="flex gap-2">
+  return <p className="flex gap-2 text-sm">
     <span className="font-bold">#{pokemon.id}</span>
     {!copyrightMode && <span className="capitalize">{pokemon.name}</span>}
   </p>
@@ -41,7 +44,7 @@ function PokemonStat({ pokemon, stat, label, color }: { pokemon: PokemonType, st
 }
 
 function PokemonTypes({ pokemon }: { pokemon: PokemonType }) {
-  return <p className="font-bold text-neutral-400 flex gap-2">
-    {pokemon.types?.map(type => <span key={type} className={typeColors[type]}>{type}</span>)}
+  return <p className="font-bold text-sm text-neutral-400 flex gap-2">
+    {pokemon.types?.map(type => <span key={type} className={`${typeColors[type]} border border-white rounded-full px-2`}>{type}</span>)}
   </p>
 }
