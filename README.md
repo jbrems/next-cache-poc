@@ -91,10 +91,31 @@ The second argument is an array of cache key parts, in the third, optional optio
 
 
 ## 5. Static endpoint
+As well as static pages, Nextjs will also prerender GET route handlers statically during the build process. 
+
+This means that during the build process a random pokemon is picked which will be served any time the GET route is being hit.
+
+(i) This cache is embedded in the built bundle and will persist untill the next build process.
+
+(i) You can opt out of this behavior by reading the `headers()` or `cookies()`, or calling `noStore()` (currently called `unstable_noStore()`) in the route handler, or by specifying `export const dynamic = 'force-dynamic'` in the route file.
+
+(i) Since there is no build step when running the dev server, this cache only applies to the production server.
+
 
 ## 6. Full route cache
+[TODO]
 
-## Busting the cache
+## Busting the caches
+Because a pokemon team usually consists of 6 pokemon, and to find out how to do it, a 6th pokemon is added to the team which circumvents all the caches except the [full route cache](#6-full-route-cache).
+
+It does so by utilizing the oldest trick in the book; by adding a random query parameter to the request URL. (Usually the timestamp is the query parameter of choice, but in our case, multiple requests are made during the same millisecond.) Since the URL is different, the request does not fall under the [request duplication](#1-request-deduplication) and [fetch cache](#2-fetch-cache). Of course we can simply choose not to use the [React cache](#3-react-cache) and [Nextjs cache](#4-nextjs-cache). To opt out of the [static endpoint](#5-static-endpoint) the `/api/pokemon/random` route file exports the const `dynamic = 'force-dynamic'`.
+
+The only cache that still applies to these pokemon is the [full route cache](#6-full-route-cache).
+
+
+## Path revalidation
+[TODO]
+
 
 ## Weirdness observed
 
