@@ -6,6 +6,8 @@ The project was started as a quick investigation into this topic, but turned out
 
 To visualize the different caching behaviors, 3 teams of 6 pokemon are randomly chosen. When a cache is being hit, the random pokemon should be the same in all 3 teams.
 
+(!) Nextjs has [excellent documentation on the different caching mechanisms](https://nextjs.org/docs/app/building-your-application/caching) which should always be trusted over anything claimed in this project.
+
 (!) Caching behavior can be different depending on whether you are running the Nextjs dev server (`npm run dev`) or building the application and running the production server (`npm run build && npm start`). The following explanations focus on the production server, but will mention any differences with the dev server.
 
 (i) In order to trigger the different caching behaviors, we had to prevent the `/api/pokemon/random` GET endpoint from being [rendered statically](#5-static-endpoint) by Nextjs.
@@ -15,10 +17,10 @@ To visualize the different caching behaviors, 3 teams of 6 pokemon are randomly 
 Let's find out how many caching mechanisms there actually are.
 
 
-## 1. Request deduplication
-Nextjs caches the response of a `fetch()` GET request by default. It does this by extending the browser's and Node's `fetch()` method with a `cache` option [citation].
+## 1. Request deduplication ([request memoization](https://nextjs.org/docs/app/building-your-application/caching#request-memoization))
+React caches the response of a `fetch()` GET request by default. It does this by extending the browser's and Node's `fetch()` method with a `cache` option. Nextjs extends the `fetch()` method even further with additional `next` options like `next.revalidate`.
 
-If we want to opt out of Nextjs' default fetch caching we have to pass the `{ cache: 'no-store' }` option to the fetch method.
+If we want to opt out of React's default fetch caching we have to pass the `{ cache: 'no-store' }` option to the `fetch()` method.
 
 E.g.:
 ```javascript
@@ -28,15 +30,15 @@ await fetch(
 )
 ```
 
-Opting out of `fetch()` caching does still render the same pokemon in all 3 teams though. This is the result of Nextjs' request deduplication. When Nextjs identifies multiple `fetch()` GET requests to the same URL during the rendering of a page, it groups these requests and only sends a single request to the URL.
+Opting out of fetch caching does still render the same pokemon in all 3 teams though. This is the result of React's request deduplication. When React identifies multiple `fetch()` GET requests to the same URL during the rendering of a page, it groups these requests and only sends a single request to the URL.
 
 (i) This caching behavior is scoped to a single page render and will result in a different pokemon on every page load or refresh.
 
 (i) This caching behavior is not active on the dev server.
 
 
-## 2. Fetch cache
-Nextjs implicitely caches the response of `fetch()` GET requests. To make this behavior explicit, you can pass the `{ cache: 'force-cache' }` option to the `fetch()` request.
+## 2. Fetch cache ([data cache](https://nextjs.org/docs/app/building-your-application/caching#data-cache))
+Nextjs implicitly caches the response of `fetch()` GET requests. To make this behavior explicit, you can pass the `{ cache: 'force-cache' }` or `{ next: { revalidate: 3600 } }` option to the `fetch()` request.
 
 E.g.:
 ```javascript
@@ -46,7 +48,7 @@ await fetch(
 )
 ```
 
-(!) Due to an [observed weirdness](#weirdness-observed), `fetch()` caching is enabled explicitely in this project.
+(!) Due to an [observed weirdness](#weirdness-observed), `fetch()` caching is enabled explicitly in this project.
 
 (i) This cache lives on the server and exists as long as the server is running. (Relaunching the server from the same machine without clearing the `.next` folder will preserve the fetch cache between server launches.)
 
@@ -118,7 +120,7 @@ export function GET() {
 ```
 
 
-## 5. Static endpoint
+## 5. Static endpoint ([full route cache](https://nextjs.org/docs/app/building-your-application/caching#full-route-cache))
 As well as static pages, Nextjs will prerender GET route handlers statically during the build process. 
 
 This means that during the build process a random pokemon is picked which will be served any time the GET route is being called.
@@ -127,23 +129,23 @@ You can opt out of this behavior by reading the `headers()` or `cookies()`, or c
 
 (i) In this project the statically rendered route is `/api/pokemon/static`.
 
-(i) This cache is embedded in the built code bundle and will persist untill a new build process creates a new code bundle.
+(i) This cache is embedded in the built code bundle and will persist until a new build process creates a new code bundle.
 
 (i) Since there is no build step when running the dev server, this cache only applies to the production server.
 
 
-## 6. Full route cache
-Once Nextjs has dynamically rendered a page for the first time, it will be cached in memory for x minutes in the full route cache [citation] [question].
+## 6. Router cache ([router cache](https://nextjs.org/docs/app/building-your-application/caching#router-cache))
+Once Nextjs has dynamically rendered a page for the first time, it will be cached in memory for 5 minutes in the router cache.
 
-During that time, navigating between the cached pages will imediately render the page from memory without consulting the server.
+During that time, navigating between the cached pages will immediately render the page from memory without consulting the server.
 
-(i) This cache lives in the memory of a single browser tab and is lost on a page refresh.
+(i) This cache lives in the memory of a single browser tab/session and is lost on a page refresh.
 
 (i) Since this is a memory cache without server intervention, the `Cache-Control` header has no effect on this cache.
 
 
 ## Busting the caches
-Because a pokemon team usually consists of 6 pokemon, and to find out how to do it, a 6th pokemon is added to each team which circumvents all the identified caches, except the [full route cache](#6-full-route-cache).
+Because a pokemon team usually consists of 6 pokemon, and to find out how to do it, a 6th pokemon is added to each team which circumvents all the identified caches, except the [router cache](#6-router-cache).
 
 It does so by utilizing the oldest trick in the book; by adding a random query parameter to the request URL. (Usually the timestamp is the query parameter of choice, but in our project, multiple requests are made during the same millisecond so a random number is added to the URL instead.)
 
@@ -154,7 +156,7 @@ await fetch(`${process.env.NEXT_URL}/api/pokemon/random?r=${Math.random()}`)
 
 Since the URL is now different for every `fetch()` request, the requests are not applicable to the [request duplication](#1-request-deduplication) and [fetch cache](#2-fetch-cache). We can, of course, simply choose not to use the [React cache](#3-react-cache) and [Nextjs cache](#4-nextjs-cache), so that's what we did. And finally, to opt out of the [static endpoint](#5-static-endpoint), the `/api/pokemon/random` route file exports the const `dynamic = 'force-dynamic'`.
 
-The only cache that still applies to these pokemon is the [full route cache](#6-full-route-cache).
+The only cache that still applies to these pokemon is the [router cache](#6-router-cache).
 
 
 ## Path revalidation
@@ -172,7 +174,7 @@ export async function clearTypesCache() {
 
 ## Weirdness observed
 
-* `{ cache: 'force-cache' }` is the default for `fetch()` GET requests, but if you already made a `fetch()` request with `{ cache: 'no-store' }`, a subsequent `fetch()` request that ommits the request options will not default to `{ cache: 'force-cache' }`.
+* `{ cache: 'force-cache' }` is the default for `fetch()` GET requests, but if you already made a `fetch()` request with `{ cache: 'no-store' }`, a subsequent `fetch()` request that omits the request options will not default to `{ cache: 'force-cache' }`.
 
 * When running the dev server, [request deduplication](#1-request-deduplication) is only active for the very first page render after the server has started and not for any subsequent page renders.
 
