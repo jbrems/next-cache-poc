@@ -4,7 +4,7 @@ Nextjs 14 and its app router have a number of different implicit and explicit ca
 
 The project was started as a quick investigation into this topic, but turned out to be a lot more comprehensive than I initially expected it to be.
 
-To visualize the different caching behaviors, 3 teams of 6 pokemon are randomly chosen. When a cache is being hit, the "random" pokemon should be the same in all 3 teams.
+To visualize the different caching behaviors, 3 teams of 6 pokemon are randomly chosen. When a cache is being hit, the random pokemon should be the same in all 3 teams.
 
 (!) Caching behavior can be different depending on whether you are running the Nextjs dev server (`npm run dev`) or building the application and running the production server (`npm run build && npm start`). The following explanations focus on the production server, but will mention any differences with the dev server.
 
@@ -22,7 +22,10 @@ If we want to opt out of Nextjs' default fetch caching we have to pass the `{ ca
 
 E.g.:
 ```javascript
-await fetch(`${process.env.NEXT_URL}/api/pokemon/random`, { cache: 'no-store' })
+await fetch(
+  `${process.env.NEXT_URL}/api/pokemon/random`, 
+  { cache: 'no-store' },
+)
 ```
 
 Opting out of `fetch()` caching does still render the same pokemon in all 3 teams though. This is the result of Nextjs' request deduplication. When Nextjs identifies multiple `fetch()` GET requests to the same URL during the rendering of a page, it groups these requests and only sends a single request to the URL.
@@ -37,7 +40,10 @@ Nextjs implicitely caches the response of `fetch()` GET requests. To make this b
 
 E.g.:
 ```javascript
-await fetch(`${process.env.NEXT_URL}/api/pokemon/random`, { cache: 'force-cache' })
+await fetch(
+  `${process.env.NEXT_URL}/api/pokemon/random`, 
+  { cache: 'force-cache' },
+)
 ```
 
 (!) Due to an [observed weirdness](#weirdness-observed), `fetch()` caching is enabled explicitely in this project.
@@ -48,14 +54,16 @@ await fetch(`${process.env.NEXT_URL}/api/pokemon/random`, { cache: 'force-cache'
 
 
 ## 3. React cache
-If you want the same behavior as the [request deduplication](#1-request-deduplication) but your data does not come from a single `fetch()` GET request (e.g.: querying a database, doing some preparation before sending a GET request, using another http library), you can use React's `cache()` method.
+If you want the same behavior as [request deduplication](#1-request-deduplication) but your data does not come from a single `fetch()` GET request (e.g.: querying a database, doing some preparation before sending a GET request, using another http library), you can use React's `cache()` method.
 
 E.g.:
 ```javascript
 // src/app/pokemon/pokemon.service.ts
 cache(() => { 
   console.log('🚀 React cache miss')
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/random?from=react-cache`).then(res => res.json()) 
+  return fetch(
+    `${process.env.NEXT_URL}/api/pokemon/random?from=react-cache`,
+  ).then(res => res.json()) 
 })
 ```
 
@@ -63,7 +71,7 @@ React's `cache()` method utilizes memoization to return the same result for func
 
 (i) Since this memoization is scoped to a single page render, the behavior is the same as [request deduplication](#1-request-deduplication). The behavior is however not limited to `fetch()` GET requests.
 
-(i) To prevent the `fetch()` request from being picked up by the [request deduplication](#1-request-deduplication), a dummy query parameter (`from=react-cache`) is added to the request URL.
+(i) To prevent the `fetch()` request from being picked up by [request deduplication](#1-request-deduplication), a dummy query parameter (`from=react-cache`) is added to the request URL.
 
 (i) Unlike [request deduplication](#1-request-deduplication), the React cache is not affected by the `Cache-Control: no-store` header (when running the dev server).
 
@@ -78,25 +86,27 @@ E.g.:
 // src/app/pokemon/pokemon.service.ts
 unstable_cache(async () => {
   console.log('🛸 Nextjs cache miss')
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/random?from=nextjs-cache`).then(res => res.json())
+  return fetch(
+    `${process.env.NEXT_URL}/api/pokemon/random?from=nextjs-cache`,
+  ).then(res => res.json())
 }, ['pokemon'], { tags: ['pokemon'] })
 ```
 
 The second argument is an array of cache key parts, in the third, optional options object we can specify one or more tags that can be used to invalidate the cache (see [Nextjs cache invalidation](#nextjs-cache-invalidation)) or specify a time after which the cache should be invalidated.
 
-(i) Unlike the [React cache](#3-react-cache) but like the [fetch cache](#2-fetch-cache), the Nextjs cache persists between multiple page renders and lives as long as the server is running. (Relaunching the server from the same machine without clearing the `.next` folder will preserve the Nextjs cache between server launches.)
+(i) Unlike the [React cache](#3-react-cache), but like the [fetch cache](#2-fetch-cache), the Nextjs cache persists between multiple page renders and lives as long as the server is running. (Relaunching the server from the same machine without clearing the `.next` folder will preserve the Nextjs cache between server launches.)
 
-(i) To prevent the `fetch()` request from being picked up by the [request deduplication](#1-request-deduplication), a dummy query parameter (`from=nextjs-cache`) is added to the request URL.
+(i) To prevent the `fetch()` request from being picked up by [request deduplication](#1-request-deduplication), a dummy query parameter (`from=nextjs-cache`) is added to the request URL.
 
-(i) As with the [fetch cache](#2-fetch-cache) you can disable this cache by sending the `Cache-Control: no-cache` header (only when running the dev server).
+(i) As with the [fetch cache](#2-fetch-cache), you can disable this cache by sending the `Cache-Control: no-cache` header (only when running the dev server).
 
 ### Nextjs cache invalidation
-If you provide one or more tags to the Nextjs `cache()` (`unstable_cache()`) method (3rd argument), you can clear that cache specifically by calling `revalidateTag()` in a server action or route handler.
+If you provide one or more tags to the Nextjs `cache()` (`unstable_cache()`) method (see the 3rd argument), you can clear that cache specifically by calling `revalidateTag()` in a server action or route handler.
 
 E.g.:
 ```javascript
 // src/app/pokemon/pokemon.service.ts
-export const getNextCachedPokemon = unstable_cache(async () => {
+unstable_cache(async () => {
   ...
 }, ['pokemon'], { tags: ['pokemon'] })
 ```
@@ -111,13 +121,15 @@ export function GET() {
 
 
 ## 5. Static endpoint
-As well as static pages, Nextjs will also prerender GET route handlers statically during the build process. 
+As well as static pages, Nextjs will prerender GET route handlers statically during the build process. 
 
 This means that during the build process a random pokemon is picked which will be served any time the GET route is being called.
 
-(i) This cache is embedded in the built code bundle and will persist untill a new build process creates a new code bundle.
+You can opt out of this behavior by reading the `headers()` or `cookies()`, or calling `noStore()` (currently called `unstable_noStore()`) in the route handler, or by specifying `export const dynamic = 'force-dynamic'` in the route file.
 
-(i) You can opt out of this behavior by reading the `headers()` or `cookies()`, or calling `noStore()` (currently called `unstable_noStore()`) in the route handler, or by specifying `export const dynamic = 'force-dynamic'` in the route file.
+(i) In this project the statically rendered route is `/api/pokemon/static`.
+
+(i) This cache is embedded in the built code bundle and will persist untill a new build process creates a new code bundle.
 
 (i) Since there is no build step when running the dev server, this cache only applies to the production server.
 
@@ -133,9 +145,16 @@ During that time, navigating between the cached pages will imediately render the
 
 
 ## Busting the caches
-Because a pokemon team usually consists of 6 pokemon, and to find out how to do it, a 6th pokemon is added to the team which circumvents all the identified caches, except the [full route cache](#6-full-route-cache).
+Because a pokemon team usually consists of 6 pokemon, and to find out how to do it, a 6th pokemon is added to each team which circumvents all the identified caches, except the [full route cache](#6-full-route-cache).
 
-It does so by utilizing the oldest trick in the book; by adding a random query parameter to the request URL. (Usually the timestamp is the query parameter of choice, but in our project, multiple requests are made during the same millisecond so a random number is added to the URL instead.) Since the URL is now different for every `fetch()` request, the requests are not applicable to the [request duplication](#1-request-deduplication) and [fetch cache](#2-fetch-cache). We can simply choose not to use the [React cache](#3-react-cache) and [Nextjs cache](#4-nextjs-cache), so that;s what we did. And finally, to opt out of the [static endpoint](#5-static-endpoint), the `/api/pokemon/random` route file exports the const `dynamic = 'force-dynamic'`.
+It does so by utilizing the oldest trick in the book; by adding a random query parameter to the request URL. (Usually the timestamp is the query parameter of choice, but in our project, multiple requests are made during the same millisecond so a random number is added to the URL instead.)
+
+E.g.:
+```javascript
+await fetch(`${process.env.NEXT_URL}/api/pokemon/random?r=${Math.random()}`)
+```
+
+Since the URL is now different for every `fetch()` request, the requests are not applicable to the [request duplication](#1-request-deduplication) and [fetch cache](#2-fetch-cache). We can, of course, simply choose not to use the [React cache](#3-react-cache) and [Nextjs cache](#4-nextjs-cache), so that's what we did. And finally, to opt out of the [static endpoint](#5-static-endpoint), the `/api/pokemon/random` route file exports the const `dynamic = 'force-dynamic'`.
 
 The only cache that still applies to these pokemon is the [full route cache](#6-full-route-cache).
 
@@ -145,12 +164,8 @@ To invalidate all server and memory caches on a certain path (page or route) you
 
 E.g.:
 ```javascript
-// src/app/cache/clear-cache/ClearCache.actions.ts
-export async function clearPathCache(_prevState: any, formData: FormData) {
-  const path = formData.get('path')?.toString() || '/'
-  console.log(`Clear path cache for ${path}`)
-  revalidatePath(path)
-  return { success: true, path }
+export async function clearTypesCache() {
+  revalidatePath('/types')
 }
 ```
 
@@ -163,4 +178,4 @@ export async function clearPathCache(_prevState: any, formData: FormData) {
 
 * When running the dev server, [request deduplication](#1-request-deduplication) is only active for the very first page render after the server has started and not for any subsequent page renders.
 
-* When running the dev server, [Nextjs cache invalidation](#nextjs-cache-invalidation) and [path invalidation](#path-revalidation) breaks the [Nextjs cache](#4-nextjs-cache) during the resulting page rerender, but does not break the [fetch cache](#2-fetch-cache).
+* When running the dev server, [Nextjs cache invalidation](#nextjs-cache-invalidation) and [path invalidation](#path-revalidation) breaks the [Nextjs cache](#4-nextjs-cache) during the resulting page rerender (when using a server action) or the next page rerender (when calling an API endpoint), but does not break the [fetch cache](#2-fetch-cache).

@@ -11,7 +11,7 @@ export async function fetchStaticPokemon(): Promise<Pokemon> {
 }
 
 export async function fetchUniquePokemon(): Promise<Pokemon> {
-  return fetch(`${process.env.NEXT_URL}/api/pokemon/random?random=${Math.random()}`).then(res => res.json())
+  return fetch(`${process.env.NEXT_URL}/api/pokemon/random?r=${Math.random()}`).then(res => res.json())
 }
 
 export const getReactCachedPokemon = cache(() => { 
