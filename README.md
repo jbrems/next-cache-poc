@@ -60,7 +60,6 @@ E.g.:
 ```javascript
 // src/app/pokemon/pokemon.service.ts
 cache(() => { 
-  console.log('🚀 React cache miss')
   return fetch(
     `${process.env.NEXT_URL}/api/pokemon/random?from=react-cache`,
   ).then(res => res.json()) 
@@ -85,7 +84,6 @@ E.g.:
 ```javascript
 // src/app/pokemon/pokemon.service.ts
 unstable_cache(async () => {
-  console.log('🛸 Nextjs cache miss')
   return fetch(
     `${process.env.NEXT_URL}/api/pokemon/random?from=nextjs-cache`,
   ).then(res => res.json())
